@@ -1,6 +1,7 @@
 package com.board.service;
 
 import com.board.entity.Question;
+import com.board.entity.SiteUser;
 import com.board.repository.QuestionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,12 @@ public class QuestionService {
         return this.questionRepository.findAll(pageable);
     }
 
-    public void create(String subject, String content) {
+    public void create(String subject, String content, SiteUser user) {
         Question question = new Question();
         question.setSubject(subject);
         question.setContent(content);
         question.setCreateDate(LocalDateTime.now());
+        question.setAuthor(user);
         this.questionRepository.save(question);
     }
 
