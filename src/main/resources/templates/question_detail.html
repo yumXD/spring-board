@@ -142,6 +142,7 @@
         rows="10"
       ></textarea>
       <textarea
+        id="markdown-editor"
         sec:authorize="isAuthenticated()"
         th:field="*{content}"
         class="form-control"
@@ -151,6 +152,9 @@
     </form>
   </div>
   <script layout:fragment="script" type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      new SimpleMDE({ element: document.getElementById("markdown-editor") });
+    });
     const delete_elements = document.getElementsByClassName("delete");
     Array.from(delete_elements).forEach(function (element) {
       element.addEventListener("click", function () {
