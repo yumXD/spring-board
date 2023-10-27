@@ -7,7 +7,7 @@
     </div>
     <form
       th:action="@{/user/signup}"
-      th:object="${siteUserCreateForm}"
+      th:object="${userCreateForm}"
       method="post"
     >
       <div th:replace="~{form_errors :: formErrorsFragment}"></div>

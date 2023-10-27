@@ -1,4 +1,13 @@
 <html layout:decorate="~{layout}">
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      $(document).ready(function () {
+        new SimpleMDE({
+          element: document.getElementById("markdown-editor"),
+        });
+      });
+    </script>
+  </th:block>
   <div layout:fragment="content" class="container">
     <h5 class="my-3 border-bottom pb-2">질문등록</h5>
     <form th:object="${questionForm}" method="post">
@@ -24,9 +33,4 @@
       <input type="submit" value="저장하기" class="btn btn-primary my-2" />
     </form>
   </div>
-  <script layout:fragment="script" type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function () {
-      new SimpleMDE({ element: document.getElementById("markdown-editor") });
-    });
-  </script>
 </html>
