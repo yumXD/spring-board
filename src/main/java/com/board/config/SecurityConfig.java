@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/user/login")
+                                .usernameParameter("email")
                                 .defaultSuccessUrl("/")
                 )
                 .logout(logout ->
@@ -29,6 +30,15 @@ public class SecurityConfig {
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                                 .logoutSuccessUrl("/")
                                 .invalidateHttpSession(true))
+        ;
+
+        http
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/css/**", "/js/**", "/", "/images/**", "/error").permitAll()
+                                .requestMatchers("/user/**", "/question/**").permitAll()
+                                .anyRequest().authenticated()
+                )
         ;
         return http.build();
     }

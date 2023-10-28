@@ -3,9 +3,9 @@ package com.board.controller;
 import com.board.dto.AnswerForm;
 import com.board.dto.QuestionForm;
 import com.board.entity.Question;
-import com.board.entity.SiteUser;
+import com.board.entity.User;
 import com.board.service.QuestionService;
-import com.board.service.SiteUserService;
+import com.board.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ import java.security.Principal;
 @Controller
 public class QuestionController {
     private final QuestionService questionService;
-    private final SiteUserService siteUserService;
+    private final UserService userService;
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
@@ -49,8 +49,8 @@ public class QuestionController {
         if (bindingResult.hasErrors()) {
             return "question_form";
         }
-        SiteUser siteUser = this.siteUserService.getUser(principal.getName());
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
+        User user = this.userService.getUser(principal.getName());
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), user);
         return "redirect:/question/list";
     }
 
@@ -104,8 +104,8 @@ public class QuestionController {
     @GetMapping("/vote/{id}")
     public String questionVote(Principal principal, @PathVariable("id") Integer id) {
         Question question = this.questionService.getQuestion(id);
-        SiteUser siteUser = this.siteUserService.getUser(principal.getName());
-        this.questionService.vote(question, siteUser);
+        User user = this.userService.getUser(principal.getName());
+        this.questionService.vote(question, user);
         return String.format("redirect:/question/detail/%s", id);
     }
 }

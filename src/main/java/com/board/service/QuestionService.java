@@ -2,7 +2,7 @@ package com.board.service;
 
 import com.board.entity.Answer;
 import com.board.entity.Question;
-import com.board.entity.SiteUser;
+import com.board.entity.User;
 import com.board.repository.QuestionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
@@ -32,7 +32,7 @@ public class QuestionService {
         return this.questionRepository.findAll(spec, pageable);  // return this.questionRepository.findAllByKeyword(kw, pageable);
     }
 
-    public void create(String subject, String content, SiteUser user) {
+    public void create(String subject, String content, User user) {
         Question question = new Question();
         question.setSubject(subject);
         question.setContent(content);
@@ -61,8 +61,8 @@ public class QuestionService {
         this.questionRepository.delete(question);
     }
 
-    public void vote(Question question, SiteUser siteUser) {
-        question.getVoter().add(siteUser);
+    public void vote(Question question, User user) {
+        question.getVoter().add(user);
         this.questionRepository.save(question);
     }
 
@@ -73,9 +73,9 @@ public class QuestionService {
             @Override
             public Predicate toPredicate(Root<Question> q, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 query.distinct(true);  // 중복을 제거
-                Join<Question, SiteUser> u1 = q.join("author", JoinType.LEFT);
+                Join<Question, User> u1 = q.join("author", JoinType.LEFT);
                 Join<Question, Answer> a = q.join("answerList", JoinType.LEFT);
-                Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
+                Join<Answer, User> u2 = a.join("author", JoinType.LEFT);
                 return cb.or(cb.like(q.get("subject"), "%" + kw + "%"), // 제목
                         cb.like(q.get("content"), "%" + kw + "%"),      // 내용
                         cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자

@@ -1,7 +1,8 @@
 package com.board.service;
 
-import com.board.entity.SiteUser;
-import com.board.repository.SiteUserRepository;
+import com.board.constant.Role;
+import com.board.entity.User;
+import com.board.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,21 +12,22 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class SiteUserService {
-    private final SiteUserRepository siteUserRepository;
+public class UserService {
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SiteUser create(String username, String email, String password) {
-        SiteUser user = new SiteUser();
+    public User create(String username, String email, String password) {
+        User user = new User();
         user.setUsername(username);
         user.setEmail(email);
+        user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(password));
-        this.siteUserRepository.save(user);
+        this.userRepository.save(user);
         return user;
     }
 
-    public SiteUser getUser(String username) {
-        Optional<SiteUser> siteUser = this.siteUserRepository.findByUsername(username);
+    public User getUser(String username) {
+        Optional<User> siteUser = this.userRepository.findByEmail(username);
         if (siteUser.isPresent()) {
             return siteUser.get();
         } else {

@@ -21,13 +21,15 @@ public class Answer {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private SiteUser author;
+    @JoinColumn(name = "users_id")
+    private User author;
 
     @ManyToMany
-    Set<SiteUser> voter;
+    Set<User> voter;
 
     private LocalDateTime createDate;
 

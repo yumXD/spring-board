@@ -3,10 +3,10 @@ package com.board.controller;
 import com.board.dto.AnswerForm;
 import com.board.entity.Answer;
 import com.board.entity.Question;
-import com.board.entity.SiteUser;
+import com.board.entity.User;
 import com.board.service.AnswerService;
 import com.board.service.QuestionService;
-import com.board.service.SiteUserService;
+import com.board.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,20 +29,20 @@ public class AnswerController {
 
     private final QuestionService questionService;
     private final AnswerService answerService;
-    private final SiteUserService siteUserService;
+    private final UserService userService;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Integer id,
                                @Valid AnswerForm answerForm, BindingResult bindingResult, Principal principal) {
         Question question = this.questionService.getQuestion(id);
-        SiteUser siteUser = this.siteUserService.getUser(principal.getName());
+        User user = this.userService.getUser(principal.getName());
         if (bindingResult.hasErrors()) {
             model.addAttribute("question", question);
             return "question_detail";
         }
         Answer answer = this.answerService.create(question,
-                answerForm.getContent(), siteUser);
+                answerForm.getContent(), user);
         return String.format("redirect:/question/detail/%s#answer_%s",
                 answer.getQuestion().getId(), answer.getId());
     }
@@ -89,8 +89,8 @@ public class AnswerController {
     @GetMapping("/vote/{id}")
     public String answerVote(Principal principal, @PathVariable("id") Integer id) {
         Answer answer = this.answerService.getAnswer(id);
-        SiteUser siteUser = this.siteUserService.getUser(principal.getName());
-        this.answerService.vote(answer, siteUser);
+        User user = this.userService.getUser(principal.getName());
+        this.answerService.vote(answer, user);
         return String.format("redirect:/question/detail/%s#answer_%s",
                 answer.getQuestion().getId(), answer.getId());
     }

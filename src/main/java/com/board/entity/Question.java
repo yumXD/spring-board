@@ -28,10 +28,11 @@ public class Question {
     private List<Answer> answerList;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private SiteUser author;
+    @JoinColumn(name = "users_id")
+    private User author;
 
     @ManyToMany
-    Set<SiteUser> voter;
+    Set<User> voter;
 
     private LocalDateTime createDate;
 

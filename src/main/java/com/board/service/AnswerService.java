@@ -2,7 +2,7 @@ package com.board.service;
 
 import com.board.entity.Answer;
 import com.board.entity.Question;
-import com.board.entity.SiteUser;
+import com.board.entity.User;
 import com.board.repository.AnswerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
 
 
-    public Answer create(Question question, String content, SiteUser author) {
+    public Answer create(Question question, String content, User author) {
         Answer answer = new Answer();
         answer.setContent(content);
         answer.setCreateDate(LocalDateTime.now());
@@ -47,8 +47,8 @@ public class AnswerService {
         this.answerRepository.delete(answer);
     }
 
-    public void vote(Answer answer, SiteUser siteUser) {
-        answer.getVoter().add(siteUser);
+    public void vote(Answer answer, User user) {
+        answer.getVoter().add(user);
         this.answerRepository.save(answer);
     }
 }
