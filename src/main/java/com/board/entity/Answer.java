@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
 @Table(name = "answer")
 @Getter
 @Setter
-public class Answer {
+public class Answer extends BaseEntity {
     @Id
     @Column(name = "answer_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +29,4 @@ public class Answer {
 
     @ManyToMany
     Set<User> voter;
-
-    private LocalDateTime createDate;
-
-    private LocalDateTime modifyDate;
 }

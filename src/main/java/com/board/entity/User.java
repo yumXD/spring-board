@@ -15,7 +15,7 @@ import java.util.Collections;
 @Table(name = "users")
 @Getter
 @Setter
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
     @Id
     @Column(name = "users_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

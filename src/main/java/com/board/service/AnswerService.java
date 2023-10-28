@@ -8,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -21,7 +20,6 @@ public class AnswerService {
     public Answer create(Question question, String content, User author) {
         Answer answer = new Answer();
         answer.setContent(content);
-        answer.setCreateDate(LocalDateTime.now());
         answer.setQuestion(question);
         answer.setAuthor(author);
         this.answerRepository.save(answer);
@@ -39,7 +37,6 @@ public class AnswerService {
 
     public void modify(Answer answer, String content) {
         answer.setContent(content);
-        answer.setModifyDate(LocalDateTime.now());
         this.answerRepository.save(answer);
     }
 
