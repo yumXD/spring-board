@@ -1,4 +1,78 @@
-<html layout:decorate="~{layout}">
+<html
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  layout:decorate="~{layout}"
+>
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      $(document).ready(function () {
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+          alert(successMessage);
+        }
+
+        $(".show-comment-form").on("click", function () {
+          $(this).closest(".card-body").find(".comment-form").toggle();
+        });
+
+        document.querySelectorAll(".comment-form").forEach((form) => {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const questionId = this.getAttribute("data-question-id");
+            const answerId = this.getAttribute("data-answer-id");
+            const content = this.querySelector(".comment-content").value;
+
+            console.log(questionId);
+            console.log(answerId);
+            console.log(content);
+
+            fetch(`/api/question/${questionId}/answer/${answerId}/comments`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ content: content }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  return response.text().then((error) => {
+                    throw new Error(`BAD_REQUEST: ${error}`);
+                  });
+                }
+                alert("댓글이 등록되엇습니다.");
+                location.reload();
+              })
+              .catch((error) => {
+                alert(error);
+              });
+          });
+        });
+        // 모든 댓글 목록 요소를 선택
+        const commentLists = document.querySelectorAll(".comment-list");
+
+        // 각 댓글 목록을 마지막으로 스크롤
+        commentLists.forEach((commentList) => {
+          commentList.scrollTop = commentList.scrollHeight;
+        });
+      });
+
+      const delete_elements = document.getElementsByClassName("delete");
+      Array.from(delete_elements).forEach(function (element) {
+        element.addEventListener("click", function () {
+          if (confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+          }
+        });
+      });
+      const recommend_elements = document.getElementsByClassName("recommend");
+      Array.from(recommend_elements).forEach(function (element) {
+        element.addEventListener("click", function () {
+          if (confirm("정말로 추천하시겠습니까?")) {
+            location.href = this.dataset.uri;
+          }
+        });
+      });
+    </script>
+  </th:block>
   <div layout:fragment="content" class="container my-3">
     <!-- 질문 -->
     <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
@@ -123,53 +197,56 @@
             th:text="삭제"
           ></a>
         </div>
+
+        <!-- 댓글 목록 -->
+        <div class="comment-list" style="max-height: 300px; overflow-y: auto">
+          <div th:each="comment : ${answer.comments}">
+            <p th:text="${comment.content}"></p>
+            <!-- 댓글의 작성자와 작성 일자도 표시할 수 있음 -->
+            <p th:text="${comment.author.username}"></p>
+            <p
+              th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"
+            ></p>
+          </div>
+        </div>
+
+        <!-- 댓글 작성 폼 -->
+        <form
+          th:attr="data-question-id=${question.id}, data-answer-id=${answer.id}"
+          class="comment-form"
+        >
+          <textarea class="form-control comment-content" rows="5"></textarea>
+          <button class="btn btn-primary my-2">댓글 작성</button>
+        </form>
       </div>
     </div>
     <!-- 답변 반복 끝  -->
-    <!-- 답변 작성 -->
-    <form
-      th:action="@{|/answer/create/${question.id}|}"
-      th:object="${answerForm}"
-      method="post"
-      class="my-3"
-    >
-      <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-      <textarea
-        sec:authorize="isAnonymous()"
-        disabled
-        th:field="*{content}"
-        class="form-control"
-        rows="10"
-      ></textarea>
-      <textarea
-        id="markdown-editor"
-        sec:authorize="isAuthenticated()"
-        th:field="*{content}"
-        class="form-control"
-        rows="10"
-      ></textarea>
-      <input type="submit" value="답변등록" class="btn btn-primary my-2" />
-    </form>
+
+    <div>
+      <!-- 답변 작성 -->
+      <form
+        th:action="@{|/answer/create/${question.id}|}"
+        th:object="${answerForm}"
+        method="post"
+        class="my-3"
+      >
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+        <textarea
+          sec:authorize="isAnonymous()"
+          disabled
+          th:field="*{content}"
+          class="form-control"
+          rows="10"
+        ></textarea>
+        <textarea
+          id="markdown-editor"
+          sec:authorize="isAuthenticated()"
+          th:field="*{content}"
+          class="form-control"
+          rows="10"
+        ></textarea>
+        <input type="submit" value="답변등록" class="btn btn-primary my-2" />
+      </form>
+    </div>
   </div>
-  <script layout:fragment="script" type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function () {
-      new SimpleMDE({ element: document.getElementById("markdown-editor") });
-    });
-    const delete_elements = document.getElementsByClassName("delete");
-    Array.from(delete_elements).forEach(function (element) {
-      element.addEventListener("click", function () {
-        if (confirm("정말로 삭제하시겠습니까?")) {
-          location.href = this.dataset.uri;
-        }
-      });
-    });
-    const recommend_elements = document.getElementsByClassName("recommend");
-    Array.from(recommend_elements).forEach(function (element) {
-      element.addEventListener("click", function () {
-        if (confirm("정말로 추천하시겠습니까?")) {
-          location.href = this.dataset.uri;
-        }
-      });
-    });
-  </script>
 </html>

@@ -30,7 +30,7 @@ public class SecurityConfig {
                 )
                 .logout(logout ->
                         logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout", "POST"))
                                 .logoutSuccessUrl("/")
                                 .invalidateHttpSession(true))
         ;
@@ -44,7 +44,6 @@ public class SecurityConfig {
                                         new AntPathRequestMatcher("/js/**"),
                                         new AntPathRequestMatcher("/css/**"),
                                         new AntPathRequestMatcher("/images/**"),
-                                        new AntPathRequestMatcher("/images/**"),
                                         new AntPathRequestMatcher("/error"),
                                         new AntPathRequestMatcher("/user/**"),
                                         new AntPathRequestMatcher("/question/**")
@@ -52,6 +51,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
         ;
+
         return http.build();
     }
 
