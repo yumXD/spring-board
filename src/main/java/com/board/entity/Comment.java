@@ -25,7 +25,6 @@ public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
-    @JsonIgnore
     private Answer answer;
 
     @ManyToOne(fetch = FetchType.LAZY)

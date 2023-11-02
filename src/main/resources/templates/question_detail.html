@@ -2,6 +2,16 @@
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
   layout:decorate="~{layout}"
 >
+  <!-- 사용자 CSS 추가 -->
+  <th:block layout:fragment="css">
+    <style>
+      .empty-comment-message {
+        font-style: italic;
+        color: #999;
+      }
+    </style>
+  </th:block>
+
   <th:block layout:fragment="script">
     <script th:inline="javascript">
       $(document).ready(function () {
@@ -20,10 +30,6 @@
             const questionId = this.getAttribute("data-question-id");
             const answerId = this.getAttribute("data-answer-id");
             const content = this.querySelector(".comment-content").value;
-
-            console.log(questionId);
-            console.log(answerId);
-            console.log(content);
 
             fetch(`/api/question/${questionId}/answer/${answerId}/comments`, {
               method: "POST",
@@ -46,12 +52,27 @@
               });
           });
         });
-        // 모든 댓글 목록 요소를 선택
-        const commentLists = document.querySelectorAll(".comment-list");
 
-        // 각 댓글 목록을 마지막으로 스크롤
-        commentLists.forEach((commentList) => {
-          commentList.scrollTop = commentList.scrollHeight;
+        // 토글 버튼 클릭 이벤트 처리
+        document.querySelectorAll(".toggle-comments").forEach((button) => {
+          button.addEventListener("click", function () {
+            const answerId = this.getAttribute("data-comment-id");
+            const commentSection = document.getElementById(
+              `comment-section-${answerId}`
+            );
+
+            if (commentSection.style.display === "none") {
+              commentSection.style.display = "block";
+            } else {
+              commentSection.style.display = "none";
+            }
+
+            // 모든 댓글 목록 요소를 선택
+            const commentList = document.getElementById(
+              `comment-list-${answerId}`
+            );
+            commentList.scrollTop = commentList.scrollHeight;
+          });
         });
       });
 
@@ -196,20 +217,70 @@
             th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
             th:text="삭제"
           ></a>
-        </div>
 
-        <!-- 댓글 목록 -->
-        <div class="comment-list" style="max-height: 300px; overflow-y: auto">
-          <div th:each="comment : ${answer.comments}">
-            <p th:text="${comment.content}"></p>
-            <!-- 댓글의 작성자와 작성 일자도 표시할 수 있음 -->
-            <p th:text="${comment.author.username}"></p>
-            <p
-              th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"
-            ></p>
+          <button
+            class="toggle-comments btn btn-sm btn-outline-secondary"
+            th:attr="data-comment-id=${answer.id}"
+            style="position: relative"
+          >
+            댓글 보기
+            <span
+              class="badge rounded-pill bg-success"
+              th:text="${#lists.size(answer.comments)}"
+              style="position: absolute; top: -5px; right: -5px"
+            ></span>
+          </button>
+        </div>
+        <div
+          th:id="'comment-section-' + ${answer.id}"
+          class="comment-section"
+          style="display: none"
+        >
+          <!-- 댓글 목록 -->
+          <div
+            th:id="'comment-list-' + ${answer.id}"
+            class="comment-list"
+            style="max-height: 300px; overflow-y: auto"
+          >
+            <div th:if="${answer.comments.empty}" class="empty-comment-message">
+              댓글이 존재하지 않습니다.
+            </div>
+            <div
+              th:each="comment, commentStat : ${answer.comments}"
+              class="comment card"
+            >
+              <!-- 댓글 내용 -->
+              <div class="card-body">
+                <span
+                  class="comment-number"
+                  th:text="${commentStat.index + 1}"
+                ></span>
+                <span class="comment-number-info">. 내용: </span>
+                <span
+                  class="comment-content"
+                  th:text="${comment.content}"
+                ></span>
+              </div>
+              <!-- 댓글 작성자와 시간 -->
+              <div class="card-footer">
+                <span class="comment-info"
+                  >작성자 :
+                  <small
+                    class="text-muted mr-2"
+                    th:text="${comment.author.username}"
+                  ></small
+                ></span>
+                <span class="comment-info"
+                  >작성시간 :
+                  <small
+                    class="text-muted"
+                    th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"
+                  ></small
+                ></span>
+              </div>
+            </div>
           </div>
         </div>
-
         <!-- 댓글 작성 폼 -->
         <form
           th:attr="data-question-id=${question.id}, data-answer-id=${answer.id}"
