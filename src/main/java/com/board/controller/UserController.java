@@ -1,6 +1,7 @@
 package com.board.controller;
 
 import com.board.dto.UserCreateForm;
+import com.board.entity.User;
 import com.board.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
 
 @RequiredArgsConstructor
 @Controller
@@ -53,7 +56,7 @@ public class UserController {
             bindingResult.reject("signupFailed", e.getMessage());
             return "signup_form";
         }
-        redirectAttributes.addFlashAttribute("successMessage","회원가입 성공!");
+        redirectAttributes.addFlashAttribute("successMessage", "회원가입 성공!");
         return "redirect:/user/login";
     }
 
@@ -61,5 +64,13 @@ public class UserController {
     public String login() {
         log.info("로그인 페이지");
         return "login_form";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model, Principal principal) {
+        log.info("마이 프로필 페이지");
+        User user = userService.getUser(principal.getName());
+        model.addAttribute("user", user);
+        return "user/profile";
     }
 }
