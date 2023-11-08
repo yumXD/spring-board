@@ -1,6 +1,6 @@
 package com.board.controller;
 
-import com.board.dto.UserCreateForm;
+import com.board.dto.UserForm;
 import com.board.entity.User;
 import com.board.service.UserService;
 import jakarta.validation.Valid;
@@ -27,12 +27,12 @@ public class UserController {
     @GetMapping("/signup")
     public String signup(Model model) {
         log.info("회원가입 페이지");
-        model.addAttribute("userCreateForm", new UserCreateForm());
+        model.addAttribute("userForm", new UserForm());
         return "signup_form";
     }
 
     @PostMapping("/signup")
-    public String signup(@Valid UserCreateForm userCreateForm,
+    public String signup(@Valid UserForm userForm,
                          BindingResult bindingResult,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -40,15 +40,15 @@ public class UserController {
             return "signup_form";
         }
 
-        if (!userCreateForm.getPassword1().equals(userCreateForm.getPassword2())) {
+        if (!userForm.getPassword1().equals(userForm.getPassword2())) {
             bindingResult.rejectValue("password2", "passwordInCorrect",
                     "2개의 패스워드가 일치하지 않습니다.");
             return "signup_form";
         }
 
         try {
-            userService.create(userCreateForm.getUsername(),
-                    userCreateForm.getEmail(), userCreateForm.getPassword1());
+            userService.create(userForm.getUsername(),
+                    userForm.getEmail(), userForm.getPassword1());
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
             return "signup_form";
@@ -72,5 +72,29 @@ public class UserController {
         User user = userService.getUser(principal.getName());
         model.addAttribute("user", user);
         return "user/profile";
+    }
+
+    @GetMapping("/profile/edit")
+    public String profileEdit(Model model, Principal principal) {
+        log.info("프로필 수정 페이지");
+        User user = userService.getUser(principal.getName());
+        model.addAttribute("userForm", new UserForm(user));
+        return "signup_form";
+    }
+
+    @PostMapping("/profile/edit")
+    public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, Principal principal) {
+
+        if (bindingResult.hasErrors()) {
+            return "signup_form";
+        }
+
+        if (!userForm.getPassword1().equals(userForm.getPassword2())) {
+            bindingResult.rejectValue("password2", "passwordInCorrect",
+                    "2개의 패스워드가 일치하지 않습니다.");
+            return "signup_form";
+        }
+        this.userService.modify(userForm.getPassword1(), principal.getName());
+        return "redirect:/question/list";
     }
 }

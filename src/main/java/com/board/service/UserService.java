@@ -34,4 +34,10 @@ public class UserService {
             throw new EntityNotFoundException("siteUser not found");
         }
     }
+
+    public void modify(String password, String email) {
+        User user = getUser(email);
+        user.setPassword(passwordEncoder.encode(password));
+        this.userRepository.save(user);
+    }
 }

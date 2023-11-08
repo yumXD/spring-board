@@ -25,7 +25,9 @@
         <h2>내 프로필</h2>
         <p>이름: <span th:text="${user.username}"></span></p>
         <p>이메일: <span th:text="${user.email}"></span></p>
-        <a class="btn btn-primary" th:href="@{/profile/edit}">프로필 수정</a>
+        <a class="btn btn-primary" th:href="@{/user/profile/edit}"
+          >프로필 수정</a
+        >
         <form th:action="@{/user/logout}" method="post">
           <input
             type="hidden"

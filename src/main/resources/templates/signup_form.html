@@ -2,14 +2,16 @@
   <div layout:fragment="content" class="container my-3">
     <div class="my-3 border-bottom">
       <div>
-        <h4>회원가입</h4>
+        <h4 th:if="${userForm.email == null}">회원가입</h4>
+        <h4 th:if="${userForm.email != null}">회원수정</h4>
       </div>
     </div>
-    <form
-      th:action="@{/user/signup}"
-      th:object="${userCreateForm}"
-      method="post"
-    >
+    <form th:object="${userForm}" method="post">
+      <input
+        type="hidden"
+        th:name="${_csrf.parameterName}"
+        th:value="${_csrf.token}"
+      />
       <div th:replace="~{form_errors :: formErrorsFragment}"></div>
       <div class="mb-3">
         <label for="username" class="form-label">이름</label>
@@ -27,7 +29,20 @@
         <label for="password2" class="form-label">비밀번호 확인</label>
         <input type="password" th:field="*{password2}" class="form-control" />
       </div>
-      <button type="submit" class="btn btn-primary">회원가입</button>
+      <button
+        th:if="${#strings.isEmpty(userForm.email)}"
+        type="submit"
+        class="btn btn-primary"
+      >
+        회원가입
+      </button>
+      <button
+        th:unless="${#strings.isEmpty(userForm.email)}"
+        type="submit"
+        class="btn btn-primary"
+      >
+        회원수정
+      </button>
     </form>
   </div>
 </html>
