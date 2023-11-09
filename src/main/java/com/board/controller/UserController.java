@@ -3,10 +3,15 @@ package com.board.controller;
 import com.board.dto.UserForm;
 import com.board.entity.User;
 import com.board.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -83,7 +88,8 @@ public class UserController {
     }
 
     @PostMapping("/profile/edit")
-    public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, Principal principal) {
+    public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, Principal principal,
+                              HttpServletRequest request, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
             return "signup_form";
@@ -95,6 +101,10 @@ public class UserController {
             return "signup_form";
         }
         this.userService.modify(userForm.getPassword1(), principal.getName());
+
+        // 로그아웃 처리
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
         return "redirect:/question/list";
     }
 }
