@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UserForm {
+    private Long id;
+
     @Size(min = 3, max = 25, message = "이름은 3 ~ 25 자 이어야합니다.")
     @NotEmpty(message = "이름은 필수항목입니다.")
     private String username;
@@ -27,6 +29,7 @@ public class UserForm {
     private String password2;
 
     public UserForm(User user) {
+        this.id = user.getId();
         this.username = user.getActualUsername();
         this.email = user.getEmail();
     }

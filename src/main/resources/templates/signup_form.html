@@ -1,9 +1,9 @@
-<html layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
   <div layout:fragment="content" class="container my-3">
     <div class="my-3 border-bottom">
       <div>
-        <h4 th:if="${userForm.email == null}">회원가입</h4>
-        <h4 th:if="${userForm.email != null}">회원수정</h4>
+        <h4 th:if="${#strings.isEmpty(userForm.id)}">회원가입</h4>
+        <h4 th:unless="${#strings.isEmpty(userForm.id)}">회원수정</h4>
       </div>
     </div>
     <form th:object="${userForm}" method="post">
@@ -12,14 +12,25 @@
         th:name="${_csrf.parameterName}"
         th:value="${_csrf.token}"
       />
+      <input type="hidden" th:field="*{id}" class="form-control" />
       <div th:replace="~{form_errors :: formErrorsFragment}"></div>
       <div class="mb-3">
         <label for="username" class="form-label">이름</label>
-        <input type="text" th:field="*{username}" class="form-control" />
+        <input
+          type="text"
+          th:field="*{username}"
+          class="form-control"
+          th:readonly="${!#strings.isEmpty(userForm.id)}"
+        />
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">이메일</label>
-        <input type="email" th:field="*{email}" class="form-control" />
+        <input
+          type="email"
+          th:field="*{email}"
+          class="form-control"
+          th:readonly="${!#strings.isEmpty(userForm.id)}"
+        />
       </div>
       <div class="mb-3">
         <label for="password1" class="form-label">비밀번호</label>
@@ -30,14 +41,14 @@
         <input type="password" th:field="*{password2}" class="form-control" />
       </div>
       <button
-        th:if="${#strings.isEmpty(userForm.email)}"
+        th:if="${#strings.isEmpty(userForm.id)}"
         type="submit"
         class="btn btn-primary"
       >
         회원가입
       </button>
       <button
-        th:unless="${#strings.isEmpty(userForm.email)}"
+        th:unless="${#strings.isEmpty(userForm.id)}"
         type="submit"
         class="btn btn-primary"
       >

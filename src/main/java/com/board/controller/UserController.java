@@ -92,6 +92,7 @@ public class UserController {
                               HttpServletRequest request, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
+            log.error("회원수정 에러");
             return "signup_form";
         }
 
