@@ -89,7 +89,7 @@ public class UserController {
 
     @PostMapping("/profile/edit")
     public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, Principal principal,
-                              HttpServletRequest request, HttpServletResponse response) {
+                              HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             log.error("회원수정 에러");
@@ -106,6 +106,8 @@ public class UserController {
         // 로그아웃 처리
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         new SecurityContextLogoutHandler().logout(request, response, authentication);
+
+        redirectAttributes.addFlashAttribute("successMessage", "회원 수정 성공!, 다시 로그인 하세요!");
         return "redirect:/question/list";
     }
 }

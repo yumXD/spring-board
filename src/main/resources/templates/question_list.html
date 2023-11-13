@@ -15,6 +15,18 @@
         document.getElementById("page").value = 0; // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
         document.getElementById("searchForm").submit();
       });
+
+      $(document).ready(function () {
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+          alert(successMessage);
+        }
+
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+          alert(errorMessage);
+        }
+      });
     </script>
   </th:block>
 
