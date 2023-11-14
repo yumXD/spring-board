@@ -6,7 +6,7 @@
         <h4 th:unless="${#strings.isEmpty(userForm.id)}">회원수정</h4>
       </div>
     </div>
-    <form th:object="${userForm}" method="post">
+    <form th:object="${userForm}" method="post" enctype="multipart/form-data">
       <input
         type="hidden"
         th:name="${_csrf.parameterName}"
@@ -40,6 +40,12 @@
         <label for="password2" class="form-label">비밀번호 확인</label>
         <input type="password" th:field="*{password2}" class="form-control" />
       </div>
+      <!-- File Upload Input -->
+      <div class="mb-3">
+        <label for="file" class="form-label">첨부파일</label>
+        <input type="file" name="file" class="form-control" />
+      </div>
+      <!-- End File Upload Input -->
       <button
         th:if="${#strings.isEmpty(userForm.id)}"
         type="submit"

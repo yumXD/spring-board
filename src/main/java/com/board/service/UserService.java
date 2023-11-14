@@ -7,7 +7,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -15,6 +18,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final FileService fileService;
 
     public User create(String username, String email, String password) {
         User user = new User();
@@ -35,9 +40,13 @@ public class UserService {
         }
     }
 
-    public void modify(String password, String email) {
+    @Transactional
+    public void modify(String password, String email, MultipartFile file) throws IOException {
         User user = getUser(email);
         user.setPassword(passwordEncoder.encode(password));
+
+        fileService.uploadUserImg(file, user);
+
         this.userRepository.save(user);
     }
 }

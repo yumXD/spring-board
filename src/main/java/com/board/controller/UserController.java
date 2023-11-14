@@ -18,8 +18,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RequiredArgsConstructor
@@ -88,8 +91,8 @@ public class UserController {
     }
 
     @PostMapping("/profile/edit")
-    public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, Principal principal,
-                              HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, @RequestParam("file") MultipartFile file, Principal principal,
+                              HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) throws IOException {
 
         if (bindingResult.hasErrors()) {
             log.error("회원수정 에러");
@@ -101,7 +104,7 @@ public class UserController {
                     "2개의 패스워드가 일치하지 않습니다.");
             return "signup_form";
         }
-        this.userService.modify(userForm.getPassword1(), principal.getName());
+        this.userService.modify(userForm.getPassword1(), principal.getName(), file);
 
         // 로그아웃 처리
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
