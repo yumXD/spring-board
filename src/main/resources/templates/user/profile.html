@@ -21,6 +21,10 @@
         <h2>내 프로필</h2>
         <p>이름: <span th:text="${user.getActualUsername}"></span></p>
         <p>이메일: <span th:text="${user.email}"></span></p>
+        <!-- 이미지 출력 -->
+        <div th:if="${userImg != null}">
+          <img th:src="'/images/' + ${userImg.savedNm}" alt="Uploaded Image" />
+        </div>
         <a class="btn btn-primary" th:href="@{/user/profile/edit}"
           >프로필 수정</a
         >

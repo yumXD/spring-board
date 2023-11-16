@@ -1,6 +1,7 @@
 package com.board.controller;
 
 import com.board.dto.UserForm;
+import com.board.entity.File;
 import com.board.entity.User;
 import com.board.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -78,7 +79,9 @@ public class UserController {
     public String profile(Model model, Principal principal) {
         log.info("마이 프로필 페이지");
         User user = userService.getUser(principal.getName());
+        File file = userService.getUserImg(user.getId());
         model.addAttribute("user", user);
+        model.addAttribute("userImg", file);
         return "user/profile";
     }
 

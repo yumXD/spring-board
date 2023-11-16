@@ -1,7 +1,9 @@
 package com.board.service;
 
 import com.board.constant.Role;
+import com.board.entity.File;
 import com.board.entity.User;
+import com.board.repository.FileRepository;
 import com.board.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final FileRepository fileRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final FileService fileService;
@@ -48,5 +51,9 @@ public class UserService {
         fileService.uploadUserImg(file, user);
 
         this.userRepository.save(user);
+    }
+
+    public File getUserImg(Long id) {
+        return fileRepository.findByUserId(id);
     }
 }
