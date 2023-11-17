@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,9 +62,17 @@ public class FileService {
         return savedFile.getId();
     }
 
+    @Transactional
     public Long uploadUserImg(MultipartFile files, User user) throws IOException {
         if (files.isEmpty()) {
             return null;
+        }
+
+        // 기본 프로필 사진 삭제
+        File findUserImg = fileRepository.findByUserId(user.getId());
+        if (findUserImg != null) {
+            fileRepository.delete(findUserImg);
+            fileRepository.flush();
         }
 
         // 원래 파일 이름 추출

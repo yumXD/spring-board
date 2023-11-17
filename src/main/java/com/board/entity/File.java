@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(name = "file")
 @Getter
 @Setter
-public class File extends BaseEntity {
+public class File {
     @Id
     @Column(name = "file_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
