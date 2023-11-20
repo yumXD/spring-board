@@ -21,9 +21,27 @@
         <h2>내 프로필</h2>
         <p>이름: <span th:text="${user.getActualUsername}"></span></p>
         <p>이메일: <span th:text="${user.email}"></span></p>
-        <!-- 이미지 출력 -->
+        <!-- 이미지 출력 또는 NO IMAGE 표시 -->
+        <p>내 사진</p>
         <div th:if="${userImg != null}">
-          <img th:src="'/images/' + ${userImg.savedNm}" alt="Uploaded Image" />
+          <img
+            th:src="'/images/' + ${userImg.savedNm}"
+            alt="Uploaded Image"
+            style="width: 150px; height: 200px"
+          />
+        </div>
+        <div th:unless="${userImg != null}">
+          <div
+            style="
+              width: 150px;
+              height: 200px;
+              border: 1px solid #ccc;
+              text-align: center;
+              line-height: 200px;
+            "
+          >
+            NO IMAGE
+          </div>
         </div>
         <a class="btn btn-primary" th:href="@{/user/profile/edit}"
           >프로필 수정</a
