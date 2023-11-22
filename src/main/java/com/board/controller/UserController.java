@@ -89,7 +89,9 @@ public class UserController {
     public String profileEdit(Model model, Principal principal) {
         log.info("프로필 수정 페이지");
         User user = userService.getUser(principal.getName());
+        File userImg = userService.getUserImg(user.getId());
         model.addAttribute("userForm", new UserForm(user));
+        model.addAttribute("userImg", userImg);
         return "signup_form";
     }
 

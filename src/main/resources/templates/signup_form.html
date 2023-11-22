@@ -40,10 +40,22 @@
         <label for="password2" class="form-label">비밀번호 확인</label>
         <input type="password" th:field="*{password2}" class="form-control" />
       </div>
+
+      <div class="mb-3">
+        <label for="password2" class="form-label">저장된 이미지</label>
+        <div th:if="${userImg != null}">
+          <img
+            th:src="'/images/' + ${userImg.savedNm}"
+            alt="Uploaded Image"
+            style="width: 150px; height: 200px"
+          />
+        </div>
+      </div>
+
       <!-- File Upload Input -->
       <div class="mb-3">
         <label for="file" class="form-label">첨부파일</label>
-        <input type="file" name="file" class="form-control" />
+        <input type="file" name="file" accept="image/*" class="form-control" />
       </div>
       <!-- End File Upload Input -->
       <button
