@@ -50,11 +50,24 @@
             style="width: 150px; height: 200px"
           />
         </div>
+        <div th:unless="${userImg != null}">
+          <div
+            style="
+              width: 150px;
+              height: 200px;
+              border: 1px solid #ccc;
+              text-align: center;
+              line-height: 200px;
+            "
+          >
+            NO IMAGE
+          </div>
+        </div>
       </div>
 
       <!-- File Upload Input -->
       <div class="mb-3">
-        <label for="file" class="form-label">첨부파일</label>
+        <label for="file" class="form-label">프로필 사진 업로드(선택)</label>
         <input type="file" name="file" accept="image/*" class="form-control" />
       </div>
       <!-- End File Upload Input -->
