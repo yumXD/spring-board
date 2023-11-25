@@ -1,4 +1,37 @@
 <html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      function previewImage(event) {
+        var input = event.target;
+        var preview = document.getElementById("image-preview");
+
+        // Clear previous preview
+        preview.innerHTML = "";
+
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+
+          reader.onload = function (e) {
+            // 이미지를 미리보기로 표시
+            preview.innerHTML =
+              '<div style="text-align: center;">' +
+              '<label for="file" class="form-label" style="display: block; margin-bottom: 5px;">업로드 할 사진</label>' +
+              '<img src="' +
+              e.target.result +
+              '" alt="Uploaded Image" style="width: 150px; height: 200px; display: block; margin: 0 auto;">' +
+              "</div>";
+          };
+
+          // 선택된 파일을 읽어 미리보기로 표시
+          reader.readAsDataURL(input.files[0]);
+        } else {
+          // 파일이 선택되지 않았을 때 미리보기 초기화
+          preview.innerHTML = "";
+        }
+      }
+    </script>
+  </th:block>
+
   <div layout:fragment="content" class="container my-3">
     <div class="my-3 border-bottom">
       <div>
@@ -42,16 +75,17 @@
       </div>
 
       <div class="mb-3">
-        <label for="password2" class="form-label">저장된 이미지</label>
-        <div th:if="${userImg != null}">
-          <img
-            th:src="'/images/' + ${userImg.savedNm}"
-            alt="Uploaded Image"
-            style="width: 150px; height: 200px"
-          />
-        </div>
-        <div th:unless="${userImg != null}">
+        <label for="file" class="form-label">저장된 이미지</label>
+        <div style="display: flex; align-items: center">
+          <div th:if="${userImg != null}">
+            <img
+              th:src="'/images/' + ${userImg.savedNm}"
+              alt="Uploaded Image"
+              style="width: 150px; height: 200px"
+            />
+          </div>
           <div
+            th:unless="${userImg != null}"
             style="
               width: 150px;
               height: 200px;
@@ -62,15 +96,26 @@
           >
             NO IMAGE
           </div>
+
+          <!-- File Upload Input -->
+          <div style="margin-left: 20px">
+            <label for="file" class="form-label"
+              >프로필 사진 업로드(선택)</label
+            >
+            <input
+              type="file"
+              name="file"
+              accept="image/*"
+              class="form-control"
+              onchange="previewImage(event)"
+            />
+          </div>
+          <!-- End File Upload Input -->
+          <!-- Image Preview Container -->
+          <div id="image-preview" style="margin-left: 20px"></div>
+          <!-- End Image Preview Container -->
         </div>
       </div>
-
-      <!-- File Upload Input -->
-      <div class="mb-3">
-        <label for="file" class="form-label">프로필 사진 업로드(선택)</label>
-        <input type="file" name="file" accept="image/*" class="form-control" />
-      </div>
-      <!-- End File Upload Input -->
       <button
         th:if="${#strings.isEmpty(userForm.id)}"
         type="submit"
