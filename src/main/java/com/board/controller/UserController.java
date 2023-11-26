@@ -97,10 +97,13 @@ public class UserController {
 
     @PostMapping("/profile/edit")
     public String profileEdit(@Valid UserForm userForm, BindingResult bindingResult, @RequestParam("file") MultipartFile file, Principal principal,
-                              HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) throws IOException {
+                              HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) throws IOException {
 
         if (bindingResult.hasErrors()) {
             log.error("회원수정 에러");
+            User user = userService.getUser(principal.getName());
+            File userImg = userService.getUserImg(user.getId());
+            model.addAttribute("userImg", userImg);
             return "signup_form";
         }
 
