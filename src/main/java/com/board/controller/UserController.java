@@ -42,7 +42,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public String signup(@Valid UserForm userForm,
-                         BindingResult bindingResult,
+                         BindingResult bindingResult, @RequestParam("file") MultipartFile file,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             log.error("회원가입 에러");
@@ -57,7 +57,7 @@ public class UserController {
 
         try {
             userService.create(userForm.getUsername(),
-                    userForm.getEmail(), userForm.getPassword1());
+                    userForm.getEmail(), userForm.getPassword1(), file);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
             return "signup_form";

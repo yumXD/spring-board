@@ -24,12 +24,14 @@ public class UserService {
 
     private final FileService fileService;
 
-    public User create(String username, String email, String password) {
+    @Transactional
+    public User create(String username, String email, String password, MultipartFile file) throws IOException {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(password));
+        fileService.uploadUserImg(file, user);
         this.userRepository.save(user);
         return user;
     }
