@@ -1,0 +1,71 @@
+<html layout:decorate="~{layout}">
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      $(document).ready(function () {
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+          alert(successMessage);
+        }
+
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+          alert(errorMessage);
+        }
+      });
+
+      var stompClient = null;
+      var username = /*[[${username}]]*/ null;
+
+      function connect() {
+        var socket = new SockJS("/stomp/chat");
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+          stompClient.subscribe("/sub/messages", function (message) {
+            showMessage(JSON.parse(message.body));
+          });
+        });
+      }
+
+      function showMessage(message) {
+        var ul = document.getElementById("chat-messages");
+        var li = document.createElement("li");
+        li.innerHTML =
+          "<strong>" + message.sender + ":</strong> " + message.content;
+        ul.appendChild(li);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        connect();
+
+        document
+          .getElementById("chat-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            var message = document.getElementById("message").value;
+            stompClient.send(
+              "/pub/chat",
+              {},
+              JSON.stringify({ content: message, sender: username })
+            );
+            document.getElementById("message").value = "";
+          });
+      });
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"
+    ></script>
+  </th:block>
+
+  <div layout:fragment="content" class="container my-3">
+    <h2 class="text-center mb-4">채팅하자</h2>
+    <form id="chat-form">
+      <input type="text" id="message" placeholder="Type a message..." />
+      <button type="submit">Send</button>
+    </form>
+    <ul id="chat-messages"></ul>
+  </div>
+</html>
