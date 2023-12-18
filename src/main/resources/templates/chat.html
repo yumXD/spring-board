@@ -60,6 +60,65 @@
     ></script>
   </th:block>
 
+  <!-- 사용자 CSS 추가 -->
+  <th:block layout:fragment="css">
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: auto;
+      }
+
+      h2 {
+        color: #333;
+      }
+
+      #chat-form {
+        display: flex;
+        margin-bottom: 20px;
+      }
+
+      #message {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      #chat-messages {
+        list-style: none;
+        padding: 0;
+      }
+
+      #chat-messages li {
+        margin-bottom: 8px;
+        padding: 8px;
+        background-color: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      #chat-messages li strong {
+        color: #333;
+      }
+    </style>
+  </th:block>
+
   <div layout:fragment="content" class="container my-3">
     <h2 class="text-center mb-4">채팅하자</h2>
     <form id="chat-form">
