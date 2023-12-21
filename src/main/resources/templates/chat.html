@@ -122,7 +122,12 @@
   <div layout:fragment="content" class="container my-3">
     <h2 class="text-center mb-4">채팅하자</h2>
     <form id="chat-form">
-      <input type="text" id="message" placeholder="Type a message..." />
+      <input
+        type="text"
+        id="message"
+        placeholder="Type a message..."
+        required
+      />
       <button type="submit">Send</button>
     </form>
     <ul id="chat-messages"></ul>
