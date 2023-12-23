@@ -101,9 +101,18 @@
         background-color: #45a049;
       }
 
+      #chat-messages-container {
+        max-height: 400px; /* 설정하고자 하는 고정 높이 값 */
+        overflow-y: auto; /* 세로 스크롤 활성화 */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+      }
+
       #chat-messages {
         list-style: none;
         padding: 0;
+        margin: 0;
       }
 
       #chat-messages li {
@@ -130,6 +139,8 @@
       />
       <button type="submit">Send</button>
     </form>
-    <ul id="chat-messages"></ul>
+    <div id="chat-messages-container">
+      <ul id="chat-messages"></ul>
+    </div>
   </div>
 </html>
