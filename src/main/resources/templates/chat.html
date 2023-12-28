@@ -1,65 +1,4 @@
 <html layout:decorate="~{layout}">
-  <th:block layout:fragment="script">
-    <script th:inline="javascript">
-      $(document).ready(function () {
-        var successMessage = /*[[${successMessage}]]*/ null;
-        if (successMessage) {
-          alert(successMessage);
-        }
-
-        var errorMessage = /*[[${errorMessage}]]*/ null;
-        if (errorMessage) {
-          alert(errorMessage);
-        }
-      });
-
-      var stompClient = null;
-      var username = /*[[${username}]]*/ null;
-
-      function connect() {
-        var socket = new SockJS("/stomp/chat");
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function (frame) {
-          stompClient.subscribe("/sub/messages", function (message) {
-            showMessage(JSON.parse(message.body));
-          });
-        });
-      }
-
-      function showMessage(message) {
-        var ul = document.getElementById("chat-messages");
-        var li = document.createElement("li");
-        li.innerHTML =
-          "<strong>" + message.sender + ":</strong> " + message.content;
-        ul.appendChild(li);
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        connect();
-
-        document
-          .getElementById("chat-form")
-          .addEventListener("submit", function (e) {
-            e.preventDefault();
-            var message = document.getElementById("message").value;
-            stompClient.send(
-              "/pub/chat",
-              {},
-              JSON.stringify({ content: message, sender: username })
-            );
-            document.getElementById("message").value = "";
-          });
-      });
-    </script>
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"
-    ></script>
-  </th:block>
-
   <!-- 사용자 CSS 추가 -->
   <th:block layout:fragment="css">
     <style>
@@ -102,9 +41,9 @@
       }
 
       #chat-messages-container {
-        height: 400px; /* 기본 높이 설정 */
-        max-height: 400px; /* 설정하고자 하는 고정 높이 값 */
-        overflow-y: auto; /* 세로 스크롤 활성화 */
+        height: 400px;
+        max-height: 400px;
+        overflow-y: auto;
         border: 1px solid #ccc;
         border-radius: 4px;
         padding: 8px;
@@ -129,8 +68,72 @@
     </style>
   </th:block>
 
-  <div layout:fragment="content" class="container my-3">
-    <h2 class="text-center mb-4">채팅하자</h2>
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+          alert(successMessage);
+        }
+
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+          alert(errorMessage);
+        }
+
+        var stompClient = null;
+        var username = /*[[${username}]]*/ null;
+
+        function connect() {
+          var socket = new SockJS("/stomp/chat");
+          stompClient = Stomp.over(socket);
+          stompClient.connect({}, function (frame) {
+            stompClient.subscribe("/sub/messages", function (message) {
+              showMessage(JSON.parse(message.body));
+              scrollToBottom();
+            });
+          });
+        }
+
+        function showMessage(message) {
+          var ul = document.getElementById("chat-messages");
+          var li = document.createElement("li");
+          li.innerHTML =
+            "<strong>" + message.sender + ":</strong> " + message.content;
+          ul.appendChild(li);
+        }
+
+        function scrollToBottom() {
+          var container = document.getElementById("chat-messages-container");
+          container.scrollTop = container.scrollHeight;
+        }
+
+        connect();
+
+        document
+          .getElementById("chat-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            var message = document.getElementById("message").value;
+            stompClient.send(
+              "/pub/chat",
+              {},
+              JSON.stringify({ content: message, sender: username })
+            );
+            document.getElementById("message").value = "";
+          });
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"
+    ></script>
+  </th:block>
+
+  <div class="container my-3" layout:fragment="content">
+    <h2 class="text-center mb-4">Let's Chat</h2>
     <form id="chat-form">
       <input
         type="text"
